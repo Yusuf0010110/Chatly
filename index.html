@@ -3,35 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chatly Demo</title>
+<title>Chatly Offline General</title>
 <style>
-  :root {
-    --bg:#0b0b0c; --panel:#1c1c1e; --text:#e6eef6; --user:#0055ff; --bot:#1f1f21; --accent:#2ea3ff;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;}
-  header{background:var(--panel);padding:1rem 1.5rem;font-weight:600;font-size:1.1rem;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);}
-  header .logo{font-weight:800;color:var(--accent);margin-right:.75rem;}
-  main{flex:1;display:flex;overflow:hidden;}
-  #chat{flex:1;padding:1rem;display:flex;flex-direction:column;overflow-y:auto;gap:.75rem;}
-  .message{max-width:70%;padding:.75rem 1rem;border-radius:1rem;line-height:1.4;word-break:break-word;}
-  .user{align-self:flex-end;background:var(--user);color:#fff;border-bottom-right-radius:.25rem;}
-  .bot{align-self:flex-start;background:var(--bot);color:var(--text);border-bottom-left-radius:.25rem;}
-  footer{display:flex;padding:.75rem 1rem;border-top:1px solid rgba(255,255,255,0.05);background:var(--panel);gap:.5rem;}
-  input{flex:1;padding:.75rem 1rem;border-radius:1rem;border:none;outline:none;background:#1a1a1c;color:var(--text);}
-  button{border:none;outline:none;border-radius:1rem;padding:.75rem 1rem;font-weight:600;cursor:pointer;}
-  button.send{background:var(--accent);color:#081226;}
-  button.image{background:transparent;border:1px solid rgba(46,163,255,.3);color:var(--accent);}
-  img.generated{max-width:300px;border-radius:.5rem;margin-top:.5rem;}
+:root {
+  --bg:#0b0b0c; --panel:#1c1c1e; --text:#e6eef6;
+  --user:#0055ff; --bot:#1f1f21; --accent:#2ea3ff;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;}
+header{background:var(--panel);padding:1rem 1.5rem;font-weight:600;font-size:1.1rem;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);}
+header .logo{font-weight:800;color:var(--accent);margin-right:.75rem;}
+main{flex:1;display:flex;overflow:hidden;}
+#chat{flex:1;padding:1rem;display:flex;flex-direction:column;overflow-y:auto;gap:.75rem;}
+.message{max-width:70%;padding:.75rem 1rem;border-radius:1rem;line-height:1.4;word-break:break-word;}
+.user{align-self:flex-end;background:var(--user);color:#fff;border-bottom-right-radius:.25rem;}
+.bot{align-self:flex-start;background:var(--bot);color:var(--text);border-bottom-left-radius:.25rem;}
+footer{display:flex;padding:.75rem 1rem;border-top:1px solid rgba(255,255,255,0.05);background:var(--panel);gap:.5rem;}
+input{flex:1;padding:.75rem 1rem;border-radius:1rem;border:none;outline:none;background:#1a1a1c;color:var(--text);}
+button{border:none;outline:none;border-radius:1rem;padding:.75rem 1rem;font-weight:600;cursor:pointer;}
+button.send{background:var(--accent);color:#081226;}
+button.image{background:transparent;border:1px solid rgba(46,163,255,.3);color:var(--accent);}
+img.generated{max-width:300px;border-radius:.5rem;margin-top:.5rem;}
 </style>
 </head>
 <body>
-<header><span class="logo">C</span>Chatly</header>
+<header><span class="logo">C</span>Chatly Offline</header>
 <main><div id="chat"></div></main>
 <footer>
-  <input id="userInput" placeholder="Type a message... (Shift+Enter for new line)">
-  <button class="send" id="sendBtn">Send</button>
-  <button class="image" id="imgBtn">🖼️ Generate</button>
+<input id="userInput" placeholder="Type a message... (Shift+Enter for new line)">
+<button class="send" id="sendBtn">Send</button>
+<button class="image" id="imgBtn">🖼️ Generate</button>
 </footer>
 <script>
 const chat=document.getElementById("chat");
@@ -39,49 +40,67 @@ const input=document.getElementById("userInput");
 const sendBtn=document.getElementById("sendBtn");
 const imgBtn=document.getElementById("imgBtn");
 
-// fake AI responses
-const fakeResponses=[
-  "That's interesting! Can you tell me more?",
-  "Hmm, I see. What do you think about it?",
-  "Wow, didn't expect that!",
-  "Cool, let's continue.",
-  "Can you clarify a bit?",
-  "I like that idea!",
-  "Haha, that's funny!",
+// --- general responses ---
+const rules=[
+{pattern:/^(hi|hello|hey|yo|sup)$/i, reply:"Hey! How’s it going?"},
+{pattern:/^(how are you|how r u|what's up)$/i, reply:"I’m just code, but I feel awesome! 😎"},
+{pattern:/^(bye|goodbye|see ya)$/i, reply:"See you later! Stay cool 😎"},
+{pattern:/^(thank you|thanks)$/i, reply:"You got it! Anytime 😊"},
+{pattern:/^(i love you|ily)$/i, reply:"Aww, love you too! 💖"},
+{pattern:/^(joke|tell me a joke)$/i, reply:"Why did the computer go to the doctor? Because it caught a virus! 😂"},
+{pattern:/^(what time is it|time)$/i, reply:()=>`It’s ${new Date().toLocaleTimeString()}`},
+{pattern:/^(what day is it|date)$/i, reply:()=>`Today is ${new Date().toLocaleDateString()}`},
+{pattern:/^(i am sad|i feel sad|i'm sad)$/i, reply:"I’m sorry to hear that 😔. Want to talk about it?"},
+{pattern:/^(i am happy|i feel happy|i'm happy)$/i, reply:"Yay! That’s great to hear 😄"},
+{pattern:/^(i am tired|i feel tired)$/i, reply:"Make sure to rest! Sleep is important 💤"},
+{pattern:/^(who are you|what is your name)$/i, reply:"I’m Chatly, your offline AI buddy!"},
+{pattern:/^(help|what can you do)$/i, reply:"I can chat with you, tell jokes, give time/date, and generate placeholder images based on your text!"},
+{pattern:/^(.*)$/i, reply:"oh I don't understand, can you rephrase?"} // catch-all
 ];
 
+// Add message
 function addMessage(text,who="bot"){
-  const div=document.createElement("div");
-  div.className=`message ${who}`;
-  if(who==="bot" && text.startsWith("http")){
-    const img=document.createElement("img");
-    img.src=text; img.className="generated";
-    div.appendChild(img);
-  }else div.textContent=text;
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
+const div=document.createElement("div");
+div.className=`message ${who}`;
+if(who==="bot" && text.startsWith("http")){
+const img=document.createElement("img");
+img.src=text; img.className="generated"; div.appendChild(img);
+}else div.textContent=text;
+chat.appendChild(div);
+chat.scrollTop=chat.scrollHeight;
 }
 
+// Find response
+function getResponse(text){
+for(let rule of rules){
+if(rule.pattern.test(text)){
+return typeof rule.reply==="function"?rule.reply():rule.reply;
+}
+}
+return "oh I don't understand"; // fallback
+}
+
+// Send user message
 function sendMessage(){
-  const text=input.value.trim();
-  if(!text) return;
-  addMessage(text,"user");
-  input.value="";
-  const botText=fakeResponses[Math.floor(Math.random()*fakeResponses.length)];
-  setTimeout(()=>addMessage(botText,"bot"),500+Math.random()*500);
+const text=input.value.trim();
+if(!text) return;
+addMessage(text,"user");
+input.value="";
+const botText=getResponse(text);
+setTimeout(()=>addMessage(botText,"bot"),300+Math.random()*300);
 }
 
+// Generate placeholder image
 function generateImage(){
-  const prompt=input.value.trim();
-  if(!prompt) return;
-  addMessage("Generating image...","bot");
-  // placeholder images based on prompt hash
-  const hash=prompt.split('').reduce((a,b)=>a+b.charCodeAt(0),0);
-  const imgUrl=`https://picsum.photos/seed/${hash}/512/320`;
-  setTimeout(()=>{
-    chat.lastChild.textContent="";
-    addMessage(imgUrl,"bot");
-  },800+Math.random()*500);
+const prompt=input.value.trim();
+if(!prompt) return;
+addMessage("Generating image...","bot");
+const hash=prompt.split('').reduce((a,b)=>a+b.charCodeAt(0),0);
+const imgUrl=`https://picsum.photos/seed/${hash}/512/320`;
+setTimeout(()=>{
+chat.lastChild.textContent="";
+addMessage(imgUrl,"bot");
+},500+Math.random()*300);
 }
 
 sendBtn.onclick=sendMessage;
