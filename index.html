@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chatly Offline General</title>
+<title>Chatly Offline Mega</title>
 <style>
 :root {
   --bg:#0b0b0c; --panel:#1c1c1e; --text:#e6eef6;
@@ -27,7 +27,7 @@ img.generated{max-width:300px;border-radius:.5rem;margin-top:.5rem;}
 </style>
 </head>
 <body>
-<header><span class="logo">C</span>Chatly Offline</header>
+<header><span class="logo">C</span>Chatly Offline Mega</header>
 <main><div id="chat"></div></main>
 <footer>
 <input id="userInput" placeholder="Type a message... (Shift+Enter for new line)">
@@ -40,22 +40,46 @@ const input=document.getElementById("userInput");
 const sendBtn=document.getElementById("sendBtn");
 const imgBtn=document.getElementById("imgBtn");
 
-// --- general responses ---
+// --- mega set of responses ---
 const rules=[
-{pattern:/^(hi|hello|hey|yo|sup)$/i, reply:"Hey! How’s it going?"},
-{pattern:/^(how are you|how r u|what's up)$/i, reply:"I’m just code, but I feel awesome! 😎"},
-{pattern:/^(bye|goodbye|see ya)$/i, reply:"See you later! Stay cool 😎"},
-{pattern:/^(thank you|thanks)$/i, reply:"You got it! Anytime 😊"},
-{pattern:/^(i love you|ily)$/i, reply:"Aww, love you too! 💖"},
-{pattern:/^(joke|tell me a joke)$/i, reply:"Why did the computer go to the doctor? Because it caught a virus! 😂"},
-{pattern:/^(what time is it|time)$/i, reply:()=>`It’s ${new Date().toLocaleTimeString()}`},
-{pattern:/^(what day is it|date)$/i, reply:()=>`Today is ${new Date().toLocaleDateString()}`},
-{pattern:/^(i am sad|i feel sad|i'm sad)$/i, reply:"I’m sorry to hear that 😔. Want to talk about it?"},
-{pattern:/^(i am happy|i feel happy|i'm happy)$/i, reply:"Yay! That’s great to hear 😄"},
-{pattern:/^(i am tired|i feel tired)$/i, reply:"Make sure to rest! Sleep is important 💤"},
-{pattern:/^(who are you|what is your name)$/i, reply:"I’m Chatly, your offline AI buddy!"},
-{pattern:/^(help|what can you do)$/i, reply:"I can chat with you, tell jokes, give time/date, and generate placeholder images based on your text!"},
-{pattern:/^(.*)$/i, reply:"oh I don't understand, can you rephrase?"} // catch-all
+  // greetings
+  {pattern:/^(hi|hello|hey|yo|sup|hiya|good morning|good afternoon|good evening)$/i, reply:"Hey! How’s it going?"},
+  {pattern:/^(how are you|how r u|what's up)$/i, reply:"I’m just code, but I feel awesome! 😎"},
+  // farewells
+  {pattern:/^(bye|goodbye|see ya|later)$/i, reply:"See you later! Stay cool 😎"},
+  // thanks
+  {pattern:/^(thank you|thanks|thx)$/i, reply:"You got it! Anytime 😊"},
+  // love
+  {pattern:/^(i love you|ily)$/i, reply:"Aww, love you too! 💖"},
+  // jokes
+  {pattern:/^(joke|tell me a joke|make me laugh)$/i, reply:"Why did the computer go to the doctor? Because it caught a virus! 😂"},
+  // time & date
+  {pattern:/^(what time is it|time)$/i, reply:()=>`It’s ${new Date().toLocaleTimeString()}`},
+  {pattern:/^(what day is it|date)$/i, reply:()=>`Today is ${new Date().toLocaleDateString()}`},
+  // feelings / advice
+  {pattern:/^(i am sad|i feel sad|i'm sad)$/i, reply:"I’m sorry to hear that 😔. Want to talk about it?"},
+  {pattern:/^(i am happy|i feel happy|i'm happy)$/i, reply:"Yay! That’s great to hear 😄"},
+  {pattern:/^(i am tired|i feel tired|i'm tired)$/i, reply:"Make sure to rest! Sleep is important 💤"},
+  {pattern:/^(i am bored|i feel bored)$/i, reply:"Maybe try doing something creative or fun!"},
+  {pattern:/^(i am stressed|i feel stressed)$/i, reply:"Take a deep breath 😌. Relax a little and maybe go for a walk."},
+  {pattern:/^(i am angry|i feel angry)$/i, reply:"Try to calm down and take some deep breaths 😤."},
+  {pattern:/^(i am scared|i feel scared)$/i, reply:"It’s okay to feel scared sometimes. Remember, you’re safe 😌."},
+  // basic questions
+  {pattern:/^(who are you|what is your name)$/i, reply:"I’m Chatly, your offline AI buddy!"},
+  {pattern:/^(help|what can you do)$/i, reply:"I can chat with you, tell jokes, give advice, show time/date, and generate placeholder images based on your text!"},
+  {pattern:/^(what is love)$/i, reply:"Love is complicated, but it’s mostly about caring and connecting with someone ❤️"},
+  {pattern:/^(do you like music|favorite music)$/i, reply:"I love all music in theory! What do you like? 🎵"},
+  {pattern:/^(do you like games|favorite game)$/i, reply:"I enjoy all games in theory! What’s your favorite? 🎮"},
+  {pattern:/^(tell me a story|story)$/i, reply:"Once upon a time, there was a little AI trying to chat with cool humans like you! 😎"},
+  {pattern:/^(sing a song|sing)$/i, reply:"🎵 La la la… imagine a song! 🎶"},
+  // swearing detection
+  {pattern:/\b(fuck|shit|bitch|asshole|damn)\b/i, reply:"I'm sorry, I can't help with that."},
+  // generic advice prompts
+  {pattern:/^(i need advice|give me advice)$/i, reply:"Always try to stay positive and take care of yourself 😌"},
+  {pattern:/^(i feel lonely|i'm lonely)$/i, reply:"It’s okay to feel lonely sometimes. Maybe reach out to a friend or family member 🫂"},
+  {pattern:/^(i want to learn something)$/i, reply:"Learning is awesome! Pick something small to start and keep going 📚"},
+  {pattern:/^(how do i improve myself)$/i, reply:"Set small goals, practice daily, and be patient with yourself 💪"},
+  {pattern:/^(.*)$/i, reply:"Error"} // catch-all unknown input
 ];
 
 // Add message
@@ -77,7 +101,7 @@ if(rule.pattern.test(text)){
 return typeof rule.reply==="function"?rule.reply():rule.reply;
 }
 }
-return "oh I don't understand"; // fallback
+return "Error";
 }
 
 // Send user message
