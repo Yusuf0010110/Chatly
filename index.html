@@ -1,177 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chatly</title>
+<title>Chatly Demo</title>
 <style>
-  /* --- Root colors --- */
   :root {
-    --bg: #0b0b0c;
-    --panel: #1c1c1e;
-    --text: #e6eef6;
-    --user: #0055ff;
-    --bot: #1f1f21;
-    --accent: #2ea3ff;
+    --bg:#0b0b0c; --panel:#1c1c1e; --text:#e6eef6; --user:#0055ff; --bot:#1f1f21; --accent:#2ea3ff;
   }
-  * { box-sizing: border-box; }
-  body {
-    margin:0;
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  header {
-    background: var(--panel);
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  header .logo { font-weight: 800; color: var(--accent); margin-right: 0.75rem; }
-  main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-  }
-  #chat {
-    flex: 1;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    gap: 0.75rem;
-  }
-  .message {
-    max-width: 70%;
-    padding: 0.75rem 1rem;
-    border-radius: 1rem;
-    line-height: 1.4;
-    word-break: break-word;
-  }
-  .user { align-self: flex-end; background: var(--user); color: #fff; border-bottom-right-radius: 0.25rem; }
-  .bot { align-self: flex-start; background: var(--bot); color: #e6eef6; border-bottom-left-radius: 0.25rem; }
-  footer {
-    display: flex;
-    padding: 0.75rem 1rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    background: var(--panel);
-    gap: 0.5rem;
-  }
-  input {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border-radius: 1rem;
-    border: none;
-    outline: none;
-    background: #1a1a1c;
-    color: var(--text);
-  }
-  button {
-    border: none;
-    outline: none;
-    border-radius: 1rem;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button.send { background: var(--accent); color: #081226; }
-  button.image { background: transparent; border: 1px solid rgba(46,163,255,0.3); color: var(--accent); }
-  img.generated { max-width: 300px; border-radius: 0.5rem; margin-top: 0.5rem; }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;}
+  header{background:var(--panel);padding:1rem 1.5rem;font-weight:600;font-size:1.1rem;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);}
+  header .logo{font-weight:800;color:var(--accent);margin-right:.75rem;}
+  main{flex:1;display:flex;overflow:hidden;}
+  #chat{flex:1;padding:1rem;display:flex;flex-direction:column;overflow-y:auto;gap:.75rem;}
+  .message{max-width:70%;padding:.75rem 1rem;border-radius:1rem;line-height:1.4;word-break:break-word;}
+  .user{align-self:flex-end;background:var(--user);color:#fff;border-bottom-right-radius:.25rem;}
+  .bot{align-self:flex-start;background:var(--bot);color:var(--text);border-bottom-left-radius:.25rem;}
+  footer{display:flex;padding:.75rem 1rem;border-top:1px solid rgba(255,255,255,0.05);background:var(--panel);gap:.5rem;}
+  input{flex:1;padding:.75rem 1rem;border-radius:1rem;border:none;outline:none;background:#1a1a1c;color:var(--text);}
+  button{border:none;outline:none;border-radius:1rem;padding:.75rem 1rem;font-weight:600;cursor:pointer;}
+  button.send{background:var(--accent);color:#081226;}
+  button.image{background:transparent;border:1px solid rgba(46,163,255,.3);color:var(--accent);}
+  img.generated{max-width:300px;border-radius:.5rem;margin-top:.5rem;}
 </style>
 </head>
 <body>
-
 <header><span class="logo">C</span>Chatly</header>
-
-<main>
-  <div id="chat"></div>
-</main>
-
+<main><div id="chat"></div></main>
 <footer>
-  <input id="userInput" placeholder="Type a message... (Shift+Enter for new line)" />
+  <input id="userInput" placeholder="Type a message... (Shift+Enter for new line)">
   <button class="send" id="sendBtn">Send</button>
   <button class="image" id="imgBtn">🖼️ Generate</button>
 </footer>
-
 <script>
-const chat = document.getElementById("chat");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const imgBtn = document.getElementById("imgBtn");
+const chat=document.getElementById("chat");
+const input=document.getElementById("userInput");
+const sendBtn=document.getElementById("sendBtn");
+const imgBtn=document.getElementById("imgBtn");
 
-// Add message
-function addMessage(text, who="bot") {
-  const div = document.createElement("div");
-  div.className = `message ${who}`;
-  if(who==="bot" && text.startsWith("http")) {
-    const img = document.createElement("img");
-    img.src = text;
-    img.className="generated";
+// fake AI responses
+const fakeResponses=[
+  "That's interesting! Can you tell me more?",
+  "Hmm, I see. What do you think about it?",
+  "Wow, didn't expect that!",
+  "Cool, let's continue.",
+  "Can you clarify a bit?",
+  "I like that idea!",
+  "Haha, that's funny!",
+];
+
+function addMessage(text,who="bot"){
+  const div=document.createElement("div");
+  div.className=`message ${who}`;
+  if(who==="bot" && text.startsWith("http")){
+    const img=document.createElement("img");
+    img.src=text; img.className="generated";
     div.appendChild(img);
-  } else {
-    div.textContent = text;
-  }
+  }else div.textContent=text;
   chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;
 }
 
-// Send user message
-async function sendMessage() {
-  const text = input.value.trim();
+function sendMessage(){
+  const text=input.value.trim();
   if(!text) return;
-  addMessage(text, "user");
-  input.value = "";
-  addMessage("...", "bot");
-
-  try {
-    const res = await fetch("/api/chat", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ message:text })
-    });
-    const data = await res.json();
-    chat.lastChild.textContent = data.reply;
-  } catch(err) {
-    chat.lastChild.textContent = "Error: "+err.message;
-  }
+  addMessage(text,"user");
+  input.value="";
+  const botText=fakeResponses[Math.floor(Math.random()*fakeResponses.length)];
+  setTimeout(()=>addMessage(botText,"bot"),500+Math.random()*500);
 }
 
-// Generate image
-async function generateImage() {
-  const prompt = input.value.trim();
+function generateImage(){
+  const prompt=input.value.trim();
   if(!prompt) return;
-  addMessage("Generating image...", "bot");
-  try {
-    const res = await fetch("/api/image", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ prompt })
-    });
-    const data = await res.json();
-    chat.lastChild.textContent = "";
-    addMessage(data.url, "bot");
-  } catch(err) {
-    chat.lastChild.textContent = "Error: "+err.message;
-  }
+  addMessage("Generating image...","bot");
+  // placeholder images based on prompt hash
+  const hash=prompt.split('').reduce((a,b)=>a+b.charCodeAt(0),0);
+  const imgUrl=`https://picsum.photos/seed/${hash}/512/320`;
+  setTimeout(()=>{
+    chat.lastChild.textContent="";
+    addMessage(imgUrl,"bot");
+  },800+Math.random()*500);
 }
 
-sendBtn.onclick = sendMessage;
-imgBtn.onclick = generateImage;
-
-// Enter to send
-input.addEventListener("keydown", e=>{
-  if(e.key==="Enter" && !e.shiftKey){
-    e.preventDefault();
-    sendMessage();
-  }
-});
+sendBtn.onclick=sendMessage;
+imgBtn.onclick=generateImage;
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}});
 </script>
-
 </body>
 </html>
