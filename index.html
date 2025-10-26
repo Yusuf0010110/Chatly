@@ -3,318 +3,319 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chat with "Sigma AI" — HTML Only Demo</title>
+<title>Chatly — Professional Dark Chat (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0f17; --card:#0f1720; --accent:#1e90ff; --muted:#9aa6b2; --bubble:#111827;
-    color-scheme: dark;
+    --bg:#0b0b0c; --panel:#0f1112; --muted:#9aa3ad; --accent:#2ea3ff; --bubble-user:#08306b; --bubble-ai:#111213; --glass: rgba(255,255,255,0.03);
   }
-  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";background:linear-gradient(180deg,#020617 0%, #081226 100%); color: #e6eef6;}
-  .app{max-width:920px;margin:28px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(2,6,23,0.6);}
-  header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid rgba(255,255,255,0.03)}
-  header h1{margin:0;font-size:18px;letter-spacing:0.2px}
-  .main{display:grid;grid-template-columns:1fr 340px;min-height:560px}
-  .chat{padding:18px;display:flex;flex-direction:column;gap:12px;min-height:560px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
-  .messages{flex:1;overflow:auto;padding-right:8px;display:flex;flex-direction:column;gap:10px}
-  .msg{max-width:78%;padding:10px 14px;border-radius:12px;line-height:1.35;font-size:14px}
-  .user{align-self:flex-end;background:linear-gradient(180deg,#063b8b,#0456d1);color:white;border-bottom-right-radius:4px}
-  .ai{align-self:flex-start;background:var(--bubble);border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
-  .meta{font-size:12px;color:var(--muted);margin-bottom:6px}
-  .composer{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, transparent, rgba(255,255,255,0.01))}
-  textarea{flex:1;padding:12px;border-radius:10px;background:#061022;border:1px solid rgba(255,255,255,0.02);color:inherit;resize:none;height:56px}
-  button{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:white;cursor:pointer}
-  aside{border-left:1px solid rgba(255,255,255,0.02);padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
-  .aside-section{margin-bottom:16px}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
-  .opt{display:flex;gap:8px;align-items:center}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:#e6eef6;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+  .app{max-width:1100px;margin:28px auto;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(2,6,23,0.7)}
+  header{display:flex;align-items:center;gap:16px;padding:18px 22px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-bottom:1px solid rgba(255,255,255,0.02)}
+  .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(180deg,#061122,#04101a);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:20px}
+  header h1{margin:0;font-size:18px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+
+  .main{display:grid;grid-template-columns:1fr 360px;min-height:640px}
+  .panel{padding:18px}
+
+  /* Chat column */
+  .chat-wrap{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg, transparent, rgba(255,255,255,0.01));}
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .search-like{flex:1;display:flex;gap:8px;align-items:center}
+  .search-like input{width:100%;padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid rgba(255,255,255,0.02);color:inherit}
+  .select{padding:8px 10px;border-radius:10px;background:var(--panel);border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
+
+  .messages{flex:1;overflow:auto;padding:10px 8px;display:flex;flex-direction:column;gap:12px}
+  .daysep{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+  .msg{max-width:78%;padding:12px 14px;border-radius:12px;line-height:1.45;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+  .msg.ai{align-self:flex-start;background:var(--bubble-ai);border:1px solid rgba(255,255,255,0.02);color:#d7e3ee}
+  .msg.user{align-self:flex-end;background:linear-gradient(180deg,var(--bubble-user),#0458d6);color:white;border-bottom-right-radius:6px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .msg-actions{display:flex;gap:8px;margin-top:8px}
+  .action-btn{background:transparent;border:1px solid rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;color:var(--muted);cursor:pointer;font-size:13px}
+  .action-btn.accept{border-color:rgba(46,163,255,0.18);color:var(--accent)}
+
+  .composer{display:flex;gap:12px;padding:14px;border-top:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.005), transparent)}
+  .composer textarea{flex:1;min-height:56px;padding:12px;border-radius:12px;background:#0b0d0e;border:1px solid rgba(255,255,255,0.02);color:inherit;resize:none}
+  .composer .col{display:flex;flex-direction:column;gap:8px}
+  .btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#081226;cursor:pointer;font-weight:600}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+  /* Aside */
+  aside{border-left:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, transparent, rgba(255,255,255,0.01));min-height:640px}
+  .aside-inner{padding:18px;display:flex;flex-direction:column;gap:14px}
+  .section-title{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .input,select{width:100%;padding:10px;border-radius:10px;background:var(--panel);border:1px solid rgba(255,255,255,0.02);color:inherit}
+  .img-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .img-grid img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
   .small{font-size:13px;color:var(--muted)}
-  .img-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
-  .img-grid img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+
   footer{padding:10px 18px;font-size:12px;color:var(--muted);text-align:center;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.01))}
-  .pill{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px;font-size:12px}
-  .switch{display:inline-flex;align-items:center;gap:6px}
-  .badge{font-size:11px;padding:4px 8px;border-radius:999px;background:#0b1220;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
-  /* scrollbar neatness */
-  .messages::-webkit-scrollbar{width:10px}
-  .messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.03);border-radius:10px}
+  .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:var(--glass);font-size:12px;color:var(--muted)}
+
+  /* responsive */
+  @media (max-width:980px){.main{grid-template-columns:1fr}aside{display:none}}
 </style>
 </head>
 <body>
 <div class="app" role="application">
   <header>
-    <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,#062a3c,#081b2e);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)">Σ</div>
+    <div class="logo">C</div>
     <div>
-      <h1>Sigma AI — chat + image demo</h1>
-      <div style="font-size:12px;color:var(--muted)">HTML-only UI — mock mode included. For real AI, connect a backend. ✨</div>
+      <h1>Chatly</h1>
+      <p class="small">Professional dark-mode chat demo — chat & image generation (front-end only)</p>
     </div>
-    <div style="margin-left:auto" class="pill">No keys in browser pls</div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <div class="tag">Dark mode</div>
+      <div class="tag">Secure: keys server-side</div>
+    </div>
   </header>
 
   <div class="main">
-    <section class="chat" aria-label="Chat area">
-      <div class="meta small">Chat history — local only (stored in browser). Try: "Draw a blue dragon" or "What's a sad playlist?"</div>
+    <section class="panel chat-wrap" aria-label="Chat column">
+      <div class="controls">
+        <div class="search-like">
+          <input id="quickSearch" placeholder="Type to search chat history..." />
+        </div>
+        <select id="mode" class="select" title="Mode">
+          <option value="mock">Mock (demo)</option>
+          <option value="server">Server (recommended)</option>
+          <option value="direct">Direct (not recommended)</option>
+        </select>
+      </div>
+
       <div id="messages" class="messages" aria-live="polite"></div>
 
       <div class="composer">
-        <textarea id="inp" placeholder="Say something cool... (Shift+Enter = newline)"></textarea>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button id="send">Send</button>
-          <button id="imgbtn" title="Generate image">Generate Image</button>
+        <textarea id="inp" placeholder="Ask something or enter an image prompt... (Shift+Enter = newline)"></textarea>
+        <div class="col">
+          <button id="send" class="btn">Send</button>
+          <button id="imgbtn" class="btn ghost">Generate Image</button>
+          <button id="clear" class="btn ghost">Clear</button>
         </div>
       </div>
     </section>
 
     <aside>
-      <div class="aside-section">
-        <label>Mode</label>
-        <div class="opt">
-          <select id="mode">
-            <option value="mock">Mock AI (no API) — instant lol</option>
-            <option value="server">Use your Server (recommended)</option>
-            <option value="direct">Direct fetch to OpenAI (NOT recommended)</option>
-          </select>
+      <div class="aside-inner">
+        <div>
+          <div class="section-title">Image gallery</div>
+          <div id="img-grid" class="img-grid"></div>
         </div>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">
-          If you pick <b>server</b>, point endpoints to <code>/api/chat</code> and <code>/api/image</code>. See comments in the code below.
+
+        <div>
+          <div class="section-title">Quick prompts</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn ghost quick" data-prompt="Write a short, friendly reply to someone feeling down.">Friendly reply</button>
+            <button class="btn ghost quick" data-prompt="Create a cover art concept: moody black & blue, futuristic, minimal text.">Cover art concept</button>
+            <button class="btn ghost quick" data-prompt="Summarize the latest tech news in 3 bullets.">3-bullet summary</button>
+          </div>
         </div>
-      </div>
 
-      <div class="aside-section">
-        <label>Image Gallery</label>
-        <div id="img-grid" class="img-grid"></div>
-      </div>
-
-      <div class="aside-section">
-        <label>Quick prompts</label>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="small quick" data-prompt="Write me a 2-line sad verse">Sad verse</button>
-          <button class="small quick" data-prompt="Explain global warming in Grade 5 terms">Explain (Grade 5)</button>
-          <button class="small quick" data-prompt="Design a futuristic black-and-blue album cover with moody vibes">Album cover idea</button>
+        <div>
+          <div class="section-title">Settings</div>
+          <label class="small">Server chat endpoint</label>
+          <input id="serverChat" class="input" placeholder="/api/chat" value="/api/chat">
+          <label class="small">Server image endpoint</label>
+          <input id="serverImage" class="input" placeholder="/api/image" value="/api/image">
+          <div class="small" style="margin-top:8px;color:var(--muted)">Do not put API keys here. Keep them on your server. Use <code>/api/chat</code> and <code>/api/image</code> to connect.</div>
         </div>
-      </div>
 
-      <div class="aside-section">
-        <label>Tips</label>
-        <div class="small" style="color:var(--muted)">
-          • Mock mode fakes responses so you can test UI. <br>
-          • For real AI responses, run a tiny serverless function that calls OpenAI and returns results to this UI. <br>
-          • Never paste your OpenAI API key into client-side JS. Keep it server-side.
+        <div>
+          <div class="section-title">Notes</div>
+          <div class="small">This is a frontend-focused HTML page. To make chat & image gen real you must implement server endpoints that call your AI provider. Ask me and I'll give you a minimal Node or Python server example.</div>
         </div>
       </div>
     </aside>
   </div>
 
-  <footer>Made for you. Gen Z vibes. Use responsibly. 😎</footer>
+  <footer>Chatly — built for real conversations. ✨</footer>
 </div>
 
 <script>
-/*
-  How to connect to a real AI (summary):
-  - Implement server endpoints:
-      POST /api/chat   -> body { message: "..." }    -> server calls OpenAI ChatCompletion and returns { reply: "..." }
-      POST /api/image  -> body { prompt: "..." }     -> server calls OpenAI Image API or other model and returns { images: ["url1","url2"] }
-  - Keep your API key on the server. Browser calls your endpoints only.
-  - If you absolutely want to prototype with a key in-browser (bad idea), choose mode "direct" and change DIRECT_API_URL below.
-*/
-
-/* ===== CONFIG ===== */
-const CONFIG = {
-  // If you choose "direct" mode, set DIRECT_API_URL to the full OpenAI endpoint
-  // (NOT recommended; this would expose keys in client). Best: use "server" mode and implement /api/chat & /api/image.
-  DIRECT_API_URL: "https://api.openai.com/v1/chat/completions", // placeholder
-  // Server endpoints (examples). If you choose "server" mode, your server should implement these routes:
-  SERVER_CHAT: "/api/chat",
-  SERVER_IMAGE: "/api/image"
-};
-/* =================== */
+/* =========================
+   Chatly — Front-end behavior
+   - Mock mode for quick testing
+   - Server mode: calls /api/chat and /api/image (your server should handle keys)
+   - Direct mode: disabled for safety
+   - Accept/approve AI answers with the checkmark
+   ========================= */
 
 const messagesEl = document.getElementById('messages');
 const inp = document.getElementById('inp');
 const sendBtn = document.getElementById('send');
 const imgBtn = document.getElementById('imgbtn');
+const clearBtn = document.getElementById('clear');
 const modeSel = document.getElementById('mode');
 const imgGrid = document.getElementById('img-grid');
+const serverChatInput = document.getElementById('serverChat');
+const serverImageInput = document.getElementById('serverImage');
 
-let history = JSON.parse(localStorage.getItem('sigma_history_v1')||'[]');
+let history = JSON.parse(localStorage.getItem('chatly_history_v1')||'[]');
 
-function renderMessages(){
+function formatTime(ts){ const d=new Date(ts); return d.toLocaleString(); }
+
+function renderMessages(filterText=''){
   messagesEl.innerHTML = '';
-  for(const m of history){
-    const d = document.createElement('div');
-    d.className = 'msg ' + (m.role==='user'?'user':'ai');
-    if(m.role==='ai'){
-      const meta = document.createElement('div'); meta.className='meta small'; meta.textContent = 'Sigma AI';
-      d.appendChild(meta);
+  const filtered = history.filter(h=> h.content.toLowerCase().includes(filterText.toLowerCase()));
+  for(const m of filtered){
+    const el = document.createElement('div');
+    el.className = 'msg ' + (m.role==='user'?'user':'ai');
+
+    if(m.role === 'ai'){
+      const meta = document.createElement('div'); meta.className='meta'; meta.textContent = 'Chatly · ' + formatTime(m.ts);
+      el.appendChild(meta);
     }
-    const txt = document.createElement('div'); txt.innerHTML = m.content.replace(/\n/g,'<br>');
-    d.appendChild(txt);
-    messagesEl.appendChild(d);
+
+    const content = document.createElement('div'); content.innerHTML = m.content.replace(/\n/g,'<br>');
+    el.appendChild(content);
+
+    if(m.role === 'ai'){
+      const actions = document.createElement('div'); actions.className = 'msg-actions';
+      const accept = document.createElement('button'); accept.className='action-btn accept'; accept.innerHTML='Accept ✓';
+      accept.title = 'Mark this answer as accepted';
+      accept.addEventListener('click', ()=>{ markAccepted(m.id, accept); });
+
+      const copy = document.createElement('button'); copy.className='action-btn'; copy.textContent='Copy'; copy.addEventListener('click', ()=>{ navigator.clipboard.writeText(m.content); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); });
+
+      actions.appendChild(accept); actions.appendChild(copy);
+      el.appendChild(actions);
+      if(m.accepted){
+        accept.textContent = 'Accepted ✓';
+        accept.disabled = true;
+      }
+    }
+
+    messagesEl.appendChild(el);
   }
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
-renderMessages();
 
-function saveHistory(){ localStorage.setItem('sigma_history_v1', JSON.stringify(history)); }
+function saveHistory(){ localStorage.setItem('chatly_history_v1', JSON.stringify(history)); }
 
 function pushMessage(role, content){
-  history.push({role, content, ts: Date.now()});
-  if(history.length>60) history = history.slice(-60);
+  const item = { id: 'm_' + Date.now() + '_' + Math.floor(Math.random()*1000), role, content, ts: Date.now(), accepted:false };
+  history.push(item);
+  if(history.length>200) history = history.slice(-200);
   saveHistory();
-  renderMessages();
+  renderMessages(document.getElementById('quickSearch').value || '');
+  return item;
 }
 
-function mockReply(userTxt){
-  // playful Gen Z style mock response
-  const replies = [
-    "Bet — I gotchu. So basically: " + userTxt,
-    "Aight here's a vibe: " + userTxt,
-    "Lowkey that slaps. Thoughts: " + userTxt,
-    "OKAY, imagine this: " + userTxt,
-    "I would say: " + userTxt
+function markAccepted(id, btn){
+  const msg = history.find(m=>m.id===id);
+  if(!msg) return;
+  msg.accepted = true;
+  saveHistory();
+  btn.textContent = 'Accepted ✓'; btn.disabled = true; btn.classList.add('accepted');
+}
+
+async function mockReply(text){
+  const variants = [
+    `Sure — here's a crisp answer:\n\n${text} (shortened)`,
+    `Alright, quick take:\n\n${text} — hope that helps.`,
+    `Short answer:\n\n${text}\n\nLet me know if you want more.`
   ];
-  // make it look like an answer with a tiny delay
-  return new Promise(res => setTimeout(()=>res(replies[Math.floor(Math.random()*replies.length)] + " ✨"), 700 + Math.random()*900));
+  await new Promise(r=>setTimeout(r, 600 + Math.random()*600));
+  return variants[Math.floor(Math.random()*variants.length)];
 }
 
 async function callServerChat(message){
-  // expects JSON { reply: "..." }
-  const resp = await fetch(CONFIG.SERVER_CHAT, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ message })
-  });
-  if(!resp.ok){
-    const t = await resp.text();
-    throw new Error('Server error: ' + t);
-  }
-  return resp.json();
+  const url = serverChatInput.value || '/api/chat';
+  const resp = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ message })});
+  if(!resp.ok) throw new Error(await resp.text());
+  return resp.json(); // expects { reply: '...' }
 }
 
 async function callServerImage(prompt){
-  // expects JSON { images: ["https://...","data:image/png;base64,..."] }
-  const resp = await fetch(CONFIG.SERVER_IMAGE, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ prompt })
-  });
-  if(!resp.ok){
-    const t = await resp.text();
-    throw new Error('Server image error: ' + t);
-  }
-  return resp.json();
+  const url = serverImageInput.value || '/api/image';
+  const resp = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ prompt })});
+  if(!resp.ok) throw new Error(await resp.text());
+  return resp.json(); // expects { images: ['url1','url2'] }
 }
 
-async function callDirectOpenAI(message){
-  // VERY BAD to use in-browser; this is a placeholder to show where direct fetch would go.
-  // You would need to provide headers with Authorization Bearer <API_KEY> here.
-  // This function is intentionally not implemented for safety.
-  throw new Error('Direct browser calls to OpenAI are disabled in this demo. Use server mode.');
-}
-
-sendBtn.addEventListener('click', async()=>{
-  const txt = inp.value.trim();
-  if(!txt) return;
+sendBtn.addEventListener('click', async ()=>{
+  const txt = inp.value.trim(); if(!txt) return;
   pushMessage('user', txt);
+  const thinking = pushMessage('ai', '...thinking');
   inp.value = '';
-  // optimistic UI
-  pushMessage('ai', '...thinking');
-  const mode = modeSel.value;
   try{
-    let aiText = '';
+    const mode = modeSel.value;
+    let reply = '';
     if(mode === 'mock'){
-      aiText = await mockReply(txt);
+      reply = await mockReply(txt);
     } else if(mode === 'server'){
       const res = await callServerChat(txt);
-      // server should return { reply: "..." }
-      aiText = res.reply || JSON.stringify(res);
+      reply = res.reply || JSON.stringify(res);
     } else {
-      const res = await callDirectOpenAI(txt);
-      aiText = res.reply || JSON.stringify(res);
+      throw new Error('Direct mode disabled for safety. Use server mode.');
     }
-    // replace the last ai "thinking" with actual
-    if(history.length && history[history.length-1].content === '...thinking' && history[history.length-1].role === 'ai'){
-      history[history.length-1].content = aiText;
-    } else {
-      pushMessage('ai', aiText);
-    }
-    saveHistory();
-    renderMessages();
+    // replace thinking
+    const idx = history.findIndex(h=>h.id===thinking.id);
+    if(idx>=0){ history[idx].content = reply; history[idx].ts = Date.now(); }
+    saveHistory(); renderMessages(document.getElementById('quickSearch').value || '');
   }catch(err){
-    // error handling: replace thinking with error text
-    if(history.length && history[history.length-1].content === '...thinking' && history[history.length-1].role === 'ai'){
-      history[history.length-1].content = 'Error: ' + err.message;
-    } else {
-      pushMessage('ai', 'Error: ' + err.message);
-    }
-    saveHistory();
-    renderMessages();
+    const idx = history.findIndex(h=>h.id===thinking.id);
+    if(idx>=0){ history[idx].content = 'Error: ' + err.message; }
+    saveHistory(); renderMessages(document.getElementById('quickSearch').value || '');
   }
 });
 
-imgBtn.addEventListener('click', async()=>{
-  const prompt = inp.value.trim() || promptFallback();
-  if(!prompt) return alert('Type an image prompt first 😅');
+imgBtn.addEventListener('click', async ()=>{
+  const prompt = inp.value.trim();
+  if(!prompt) return alert('Type an image prompt first');
   pushMessage('user', 'Image: ' + prompt);
-  pushMessage('ai', 'Generating image...');
-  const mode = modeSel.value;
+  const thinking = pushMessage('ai', 'Generating images...');
   try{
+    const mode = modeSel.value;
     let imgs = [];
     if(mode === 'mock'){
-      // generate placeholder images (picsum + seeded)
       imgs = [
-        'https://picsum.photos/seed/' + encodeURIComponent(prompt+Date.now()) + '/512/384',
-        'https://picsum.photos/seed/' + encodeURIComponent(prompt+'alt') + '/512/384'
+        'https://picsum.photos/seed/' + encodeURIComponent(prompt+Date.now()) + '/512/320',
+        'https://picsum.photos/seed/' + encodeURIComponent(prompt+'alt') + '/512/320'
       ];
     } else if(mode === 'server'){
       const res = await callServerImage(prompt);
       imgs = res.images || [];
     } else {
-      // direct mode not implemented
-      throw new Error('Direct image generation in-browser is disabled. Use server mode.');
+      throw new Error('Direct image generation disabled. Use server mode.');
     }
 
-    // replace last "Generating image..." with text and show images
-    if(history.length && history[history.length-1].content === 'Generating image...' && history[history.length-1].role === 'ai'){
-      history[history.length-1].content = 'Here are some images for: ' + prompt;
-    } else {
-      pushMessage('ai', 'Here are some images for: ' + prompt);
-    }
-    saveHistory();
-    renderMessages();
+    const idx = history.findIndex(h=>h.id===thinking.id);
+    const replyText = imgs.length ? `Generated ${imgs.length} image(s)` : 'No images returned';
+    if(idx>=0){ history[idx].content = replyText; }
+    saveHistory(); renderMessages(document.getElementById('quickSearch').value || '');
 
-    // show images in side gallery
+    // show gallery
     imgGrid.innerHTML = '';
     imgs.forEach(u=>{
-      const img = document.createElement('img');
-      img.src = u;
-      img.alt = prompt;
-      imgGrid.appendChild(img);
+      const i = document.createElement('img'); i.src = u; i.alt = prompt; imgGrid.appendChild(i);
     });
+
   }catch(err){
-    if(history.length && history[history.length-1].content === 'Generating image...' && history[history.length-1].role === 'ai'){
-      history[history.length-1].content = 'Image error: ' + err.message;
-    } else {
-      pushMessage('ai', 'Image error: ' + err.message);
-    }
-    saveHistory();
-    renderMessages();
+    const idx = history.findIndex(h=>h.id===thinking.id);
+    if(idx>=0){ history[idx].content = 'Image error: ' + err.message; }
+    saveHistory(); renderMessages(document.getElementById('quickSearch').value || '');
   }
 });
 
-function promptFallback(){ return inp.value.trim() || 'A moody black-and-blue album cover, futuristic, cinematic lighting'; }
+clearBtn.addEventListener('click', ()=>{ if(confirm('Clear chat history?')){ history=[]; saveHistory(); renderMessages(); imgGrid.innerHTML=''; }});
 
 // quick prompts
-document.querySelectorAll('.quick').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ inp.value = btn.dataset.prompt; inp.focus(); });
-});
+document.querySelectorAll('.quick').forEach(b=>b.addEventListener('click', ()=>{ inp.value = b.dataset.prompt; inp.focus(); }));
 
-// keyboard: Enter to send
-inp.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    sendBtn.click();
-  }
-});
+// search
+document.getElementById('quickSearch').addEventListener('input', (e)=>{ renderMessages(e.target.value); });
+
+// keyboard send
+inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendBtn.click(); } });
+
+// init
+renderMessages();
 </script>
 </body>
 </html>
